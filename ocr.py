@@ -1,5 +1,5 @@
-
 import os
+
 os.environ["FLAGS_allocator_strategy"] = 'auto_growth'
 
 import cv2
@@ -10,6 +10,7 @@ import json
 import time
 import logging
 from PIL import Image
+from loguru import logger  # noqa
 
 import tools.infer.utility as utility
 import tools.infer.predict_rec as predict_rec
@@ -17,8 +18,6 @@ import tools.infer.predict_det as predict_det
 import tools.infer.predict_cls as predict_cls
 from ppocr.utils.logging import get_logger
 from tools.infer.utility import draw_ocr_box_txt, get_rotate_crop_image
-
-logger = get_logger()
 
 
 class TextSystem(object):
@@ -42,7 +41,7 @@ class TextSystem(object):
         for bno in range(bbox_num):
             cv2.imwrite(
                 os.path.join(output_dir,
-                             f"mg_crop_{bno+self.crop_image_res_index}.jpg"),
+                             f"mg_crop_{bno + self.crop_image_res_index}.jpg"),
                 img_crop_list[bno])
             logger.debug(f"{bno}, {rec_res[bno]}")
         self.crop_image_res_index += bbox_num
@@ -123,9 +122,10 @@ class Need:
 
 def load_model():
     args = utility.parse_args()
-    args.det_model_dir = './ch_PP-OCRv3_det_infer'
-    args.rec_model_dir = './ch_PP-OCRv3_rec_infer'
-    args.use_gpu = False
+    args.det_model_dir = os.getenv('DET_MODEL', './ch_PP-OCRv3_det_infer')
+    args.rec_model_dir = os.getenv('REC_MODEL', './ch_PP-OCRv3_rec_infer')
+    logger.info('model={}, {}'.format(args.det_model_dir, args.rec_model_dir))
+    args.use_gpu = True
     Need.text_sys = TextSystem(args)
     Need.font_path = args.vis_font_path
     Need.drop_score = args.drop_score
@@ -133,7 +133,7 @@ def load_model():
     os.makedirs(Need.draw_img_save_dir, exist_ok=True)
 
 
-def ocr(img_array, is_visualize=False):
+def ocr(img_array, download_filename=None):
     _st = time.time()
     start_time = time.time()
     dt_boxes, rec_res, time_dict = Need.text_sys(img_array)
@@ -148,7 +148,7 @@ def ocr(img_array, is_visualize=False):
         "points": np.array(dt_boxes[idx]).astype(np.int32).tolist(),
     } for idx in range(len(dt_boxes))]
 
-    if is_visualize:
+    if download_filename:
         image = Image.fromarray(cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB))
         boxes = dt_boxes
         txts = [rec_res[i][0] for i in range(len(rec_res))]
@@ -161,12 +161,11 @@ def ocr(img_array, is_visualize=False):
             scores,
             drop_score=Need.drop_score,
             font_path=Need.font_path)
-        save_file_name = "ocr.png"
         cv2.imwrite(
-            os.path.join(Need.draw_img_save_dir, os.path.basename(save_file_name)),
+            os.path.join(Need.draw_img_save_dir, os.path.basename(download_filename)),
             draw_img[:, :, ::-1])
         logger.debug("The visualized image saved in {}".format(
-            os.path.join(Need.draw_img_save_dir, os.path.basename(save_file_name))))
+            os.path.join(Need.draw_img_save_dir, os.path.basename(download_filename))))
 
     logger.info("The predict total time is {}".format(time.time() - _st))
     return res
@@ -176,13 +175,3 @@ if __name__ == "__main__":
     pic_path = './22.png'
     load_model()
     ocr(cv2.imread(pic_path))
-
-
-
-
-
-
-
-
-
-

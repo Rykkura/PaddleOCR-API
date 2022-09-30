@@ -1,12 +1,7 @@
-FROM paddlepaddle/paddle:2.2.0-gpu-cuda10.2-cudnn7
+FROM m986883511/paddleocr:env
 MAINTAINER author "https://github.com/m986883511"
 WORKDIR /m986883511
 EXPOSE 8000
 
-COPY docker/requirements.txt .
-RUN pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
-
-ADD docker/backend.tar /extra-packages
 COPY . .
-RUN rm -rf docker
 CMD ["python3", "main.py"]

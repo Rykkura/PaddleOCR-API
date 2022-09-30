@@ -16,7 +16,7 @@ __dir__ = os.path.dirname(__file__)
 
 app = FastAPI(
     title="paddle-ocr-api",
-    dependencies=[Depends(load_model)],
+    # dependencies=[Depends(load_model)],
     description="paddle ocr api"
 )
 
@@ -66,7 +66,7 @@ async def ocr_file(file: UploadFile = File(...)):
     with open(file.filename, 'wb') as f:
         f.write(data)
     array = Transfer.bytes_to_array(data)
-    ocr(array, is_visualize=True)
+    ocr(array, download_filename=file.filename)
     return FileResponse(
             filename,  # 这里的文件名是你要发送的文件名
             filename=file.filename  # 这里的文件名是你要给用户展示的下载的文件名，比如我这里叫lol.exe
@@ -84,4 +84,5 @@ if __name__ == '__main__':
     logger.add(LOG_PATH, rotation="1024KB")
     host, port = '0.0.0.0', 8000
     logger.info('bind on {}:{}, log_path is {}'.format(host, port, LOG_PATH))
+    load_model()
     uvicorn.run(app="main:app", host=host, port=port)
