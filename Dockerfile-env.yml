@@ -1,0 +1,6 @@
+FROM paddlepaddle/paddle:2.2.0-gpu-cuda10.2-cudnn7
+MAINTAINER author "https://github.com/m986883511"
+EXPOSE 8000
+
+COPY docker/requirements.txt .
+RUN pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/

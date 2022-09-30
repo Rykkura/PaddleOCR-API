@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  web:
+    image: m986883511/paddleocr:api
+    command: ['sleep', '1d']
+    container_name: paddleocr-env
+    volumes:
+      - ".:/m986883511"
+    privileged: true
+    dns: 114.114.114.114
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "40000:8000"
+    build:
+      context: ./
+      dockerfile: Dockerfile-alternate
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
