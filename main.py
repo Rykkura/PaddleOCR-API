@@ -15,9 +15,9 @@ from ocr import load_model, ocr
 __dir__ = os.path.dirname(__file__)
 
 app = FastAPI(
-    title="paddle-ocr-api",
+    title="PaddleOCR-API",
     # dependencies=[Depends(load_model)],
-    description="paddle ocr api"
+    description="Paddle OCR API"
 )
 
 

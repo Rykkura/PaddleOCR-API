@@ -2,15 +2,12 @@ version: "3.8"
 services:
   web:
     image: m986883511/paddleocr:api
-    command: ['sleep', '1d']
     container_name: paddleocr-api
-    privileged: true
-    dns: 114.114.114.114
     environment:
       - DET_MODEL=/build/ch_PP-OCRv3_det_infer
       - REC_MODEL=/build/ch_PP-OCRv3_rec_infer
     ports:
-      - "40001:8000"
+      - "8000:8000"
     deploy:
       resources:
         reservations:
