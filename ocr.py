@@ -117,13 +117,13 @@ class Need:
     text_sys = None
     font_path = ''
     drop_score = ''
-    draw_img_save_dir = ''
+    draw_img_save_dir = '/imgs'
 
 
 def load_model():
     args = utility.parse_args()
-    args.det_model_dir = os.getenv('DET_MODEL', './ch_PP-OCRv3_det_infer')
-    args.rec_model_dir = os.getenv('REC_MODEL', './ch_PP-OCRv3_rec_infer')
+    args.det_model_dir = os.getenv('DET_MODEL', './det_EAST')
+    args.rec_model_dir = os.getenv('REC_MODEL', './rec_SRN')
     logger.info('model={}, {}'.format(args.det_model_dir, args.rec_model_dir))
     args.use_gpu = True
     Need.text_sys = TextSystem(args)
@@ -172,6 +172,6 @@ def ocr(img_array, download_filename=None):
 
 
 if __name__ == "__main__":
-    pic_path = './22.png'
+    pic_path = 'IMG_9611.jpg'
     load_model()
-    ocr(cv2.imread(pic_path))
+    ocr(cv2.imread(pic_path), download_filename='/imgs/result.jpg')
