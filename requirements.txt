@@ -19,3 +19,5 @@ loguru
 uvicorn
 python-multipart
 paddlepaddle==2.5.2
+flask
+flask-cors
