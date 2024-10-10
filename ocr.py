@@ -174,4 +174,4 @@ def ocr(img_array, download_filename=None):
 if __name__ == "__main__":
     pic_path = 'IMG_9611.jpg'
     load_model()
-    ocr(cv2.imread(pic_path), download_filename='/imgs/result.jpg')
+    ocr(cv2.imread(pic_path), download_filename='/result.jpg')

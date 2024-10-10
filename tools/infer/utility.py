@@ -45,7 +45,7 @@ def init_args():
     parser.add_argument("--use_tensorrt", type=str2bool, default=False)
     parser.add_argument("--min_subgraph_size", type=int, default=15)
     parser.add_argument("--precision", type=str, default="fp32")
-    parser.add_argument("--gpu_mem", type=int, default=500)
+    parser.add_argument("--gpu_mem", type=int, default=1000)
     parser.add_argument("--gpu_id", type=int, default=0)
 
     # params for text detector
